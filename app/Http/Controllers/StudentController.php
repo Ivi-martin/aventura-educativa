@@ -25,14 +25,18 @@ class StudentController extends Controller
             'name' => 'required|string|max:255',
         ]);
 
-        // Generamos un PIN único utilizando tu servicio existente
-        $pin = $pinService->generate();
+        // Generamos un PIN de 4 dígitos y guardamos únicamente su hash
+        $pin = $pinService->generatePin();
 
         $request->user()->students()->create([
             'name' => $validated['name'],
-            'pin' => $pin,
+            'pin_hash' => $pinService->hashPin($pin),
         ]);
 
-        return redirect()->back()->with('success', 'Estudiante creado correctamente.');
+        // Devolvemos el PIN en texto plano solo en esta respuesta (no se guarda así en BD),
+        // para que el profesor/familia pueda anotarlo y dárselo al estudiante.
+        return redirect()->back()
+            ->with('success', 'Estudiante creado correctamente.')
+            ->with('pin', $pin);
     }
 }

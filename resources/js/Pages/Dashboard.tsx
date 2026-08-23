@@ -1,20 +1,24 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, usePage } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
 
 interface Student {
     id: number;
     name: string;
-    pin: string;
     created_at: string;
 }
 
 interface Props {
-    auth: any;
     students: Student[];
 }
 
-export default function Dashboard({ auth, students }: Props) {
+interface FlashProps {
+    success?: string;
+    pin?: string;
+}
+
+export default function Dashboard({ students }: Props) {
+    const { flash } = usePage().props as { flash?: FlashProps };
     const { data, setData, post, processing, errors, reset } = useForm({
         name: '',
     });
@@ -28,13 +32,19 @@ export default function Dashboard({ auth, students }: Props) {
 
     return (
         <AuthenticatedLayout
-            user={auth.user}
             header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Panel del Profesor</h2>}
         >
             <Head title="Dashboard" />
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+                    {flash?.pin && (
+                        <div className="p-4 bg-green-50 border border-green-200 rounded-lg text-green-800 text-sm">
+                            {flash.success} El PIN de acceso es{' '}
+                            <span className="font-mono font-bold text-lg">{flash.pin}</span>.
+                            Apúntalo ahora: no podrás volver a verlo.
+                        </div>
+                    )}
                     {/* Formulario para añadir alumno */}
                     <div className="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
                         <section className="max-w-xl">
@@ -85,7 +95,7 @@ export default function Dashboard({ auth, students }: Props) {
                                     <thead className="bg-gray-50">
                                         <tr>
                                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">PIN de Acceso</th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">PIN</th>
                                         </tr>
                                     </thead>
                                     <tbody className="bg-white divide-y divide-gray-200">
@@ -93,8 +103,11 @@ export default function Dashboard({ auth, students }: Props) {
                                             <tr key={student.id}>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{student.name}</td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    <span className="bg-indigo-100 text-indigo-800 font-mono font-bold px-3 py-1 rounded-full text-sm">
-                                                        {student.pin}
+                                                    <span
+                                                        className="bg-gray-100 text-gray-500 font-mono px-3 py-1 rounded-full text-sm"
+                                                        title="El PIN es privado y solo se muestra una vez, al crear al alumno."
+                                                    >
+                                                        ••••
                                                     </span>
                                                 </td>
                                             </tr>
