@@ -1,10 +1,11 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, useForm, usePage } from '@inertiajs/react';
-import { FormEventHandler } from 'react';
+import { FormEventHandler, useState } from 'react';
 
 interface Student {
     id: number;
     name: string;
+    pin: string; // <-- Añadido para poder leer el PIN plano desde la base de datos
     created_at: string;
 }
 
@@ -15,6 +16,26 @@ interface Props {
 interface FlashProps {
     success?: string;
     pin?: string;
+}
+
+// Componente auxiliar para cada fila de alumno para manejar su propio estado de mostrar/ocultar PIN
+function StudentRow({ student }: { student: Student }) {
+    const [showPin, setShowPin] = useState(false);
+
+    return (
+        <tr>
+            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{student.name}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <span
+                    onClick={() => setShowPin(!showPin)}
+                    className="bg-gray-100 text-gray-700 font-mono px-3 py-1 rounded-full text-sm cursor-pointer select-none hover:bg-gray-200 transition"
+                    title="Haz clic para mostrar u ocultar el PIN"
+                >
+                    {showPin ? student.pin : '••••'}
+                </span>
+            </td>
+        </tr>
+    );
 }
 
 export default function Dashboard({ students }: Props) {
@@ -38,11 +59,9 @@ export default function Dashboard({ students }: Props) {
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-                    {flash?.pin && (
+                    {flash?.success && (
                         <div className="p-4 bg-green-50 border border-green-200 rounded-lg text-green-800 text-sm">
-                            {flash.success} El PIN de acceso es{' '}
-                            <span className="font-mono font-bold text-lg">{flash.pin}</span>.
-                            Apúntalo ahora: no podrás volver a verlo.
+                            {flash.success}
                         </div>
                     )}
                     {/* Formulario para añadir alumno */}
@@ -95,22 +114,12 @@ export default function Dashboard({ students }: Props) {
                                     <thead className="bg-gray-50">
                                         <tr>
                                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">PIN</th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">PIN (Haz clic para ver)</th>
                                         </tr>
                                     </thead>
                                     <tbody className="bg-white divide-y divide-gray-200">
                                         {students.map((student) => (
-                                            <tr key={student.id}>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{student.name}</td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    <span
-                                                        className="bg-gray-100 text-gray-500 font-mono px-3 py-1 rounded-full text-sm"
-                                                        title="El PIN es privado y solo se muestra una vez, al crear al alumno."
-                                                    >
-                                                        ••••
-                                                    </span>
-                                                </td>
-                                            </tr>
+                                            <StudentRow key={student.id} student={student} />
                                         ))}
                                     </tbody>
                                 </table>
