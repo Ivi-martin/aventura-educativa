@@ -12,7 +12,7 @@ class Student extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'name', 'avatar_settings', 'pin_hash', 'course', 
+        'name', 'avatar_settings', 'pin', 'pin_hash', 'course', 
         'family_user_id', 'school_id', 'classroom_id', 
         'xp_total', 'level', 'streak_days', 'last_activity_at',
     ];
