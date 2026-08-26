@@ -13,11 +13,15 @@ class StudentProgress extends Model
     protected $table = 'student_progress';
 
     protected $fillable = [
-        'student_id', 'content_id', 'content_type', 'status', 'score', 'completed_at',
+        'student_id', 'topic_id', 'completed', 'accuracy', 'stars', 'attempts', 'time_spent', 'completed_at',
     ];
 
     protected $casts = [
-        'score' => 'integer',
+        'completed' => 'boolean',
+        'accuracy' => 'decimal:2',
+        'stars' => 'integer',
+        'attempts' => 'integer',
+        'time_spent' => 'integer',
         'completed_at' => 'datetime',
     ];
 
@@ -26,8 +30,8 @@ class StudentProgress extends Model
         return $this->belongsTo(Student::class);
     }
 
-    public function isCompleted(): bool
+    public function topic(): BelongsTo
     {
-        return $this->status === 'completed';
+        return $this->belongsTo(Topic::class);
     }
 }

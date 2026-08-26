@@ -10,18 +10,26 @@ class StudentAttempt extends Model
 {
     use HasFactory;
 
+    /** Solo hay created_at (registro de solo-inserción), no updated_at. */
+    const UPDATED_AT = null;
+
     protected $fillable = [
-        'student_id', 'question_id', 'is_correct', 'time_spent_seconds', 'answer_data',
+        'student_id', 'question_id', 'correct', 'response_time_ms', 'xp_earned',
     ];
 
     protected $casts = [
-        'is_correct' => 'boolean',
-        'time_spent_seconds' => 'integer',
-        'answer_data' => 'array',
+        'correct' => 'boolean',
+        'response_time_ms' => 'integer',
+        'xp_earned' => 'integer',
     ];
 
     public function student(): BelongsTo
     {
         return $this->belongsTo(Student::class);
+    }
+
+    public function question(): BelongsTo
+    {
+        return $this->belongsTo(Question::class);
     }
 }
