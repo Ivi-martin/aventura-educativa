@@ -14,6 +14,7 @@ class StudentFactory extends Factory
         return [
             'name' => fake()->firstName(),
             'avatar_settings' => ['head' => null, 'body' => null, 'pet' => null, 'background' => null],
+            'pin' => '1234',
             'pin_hash' => bcrypt('1234'),
             'course' => '3º Primaria',
             'family_user_id' => User::factory()->family(),

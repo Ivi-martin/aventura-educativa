@@ -18,7 +18,9 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call([
-            UserSeeder::class,
+            UserSeeder::class,   // admin, editor, familias y profesores de prueba
+            StudentSeeder::class, // alumno "Lucía", PIN 1234, bajo familia@example.com
+            ContentSeeder::class, // tema + actividad + 5 preguntas para probar ActivityRunner
         ]);
     }
 }

@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\Auth\StudentAuthController;
+use App\Http\Controllers\Student\ActivityController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -37,6 +38,10 @@ Route::middleware([\App\Http\Middleware\EnsureStudentIsAuthenticated::class])->p
     Route::get('/adventure', function () {
         return Inertia::render('Student/AdventureMap');
     })->name('adventure');
+
+    Route::get('/activity/{activity}', [ActivityController::class, 'show'])->name('activity.show');
+    Route::post('/activity/{activity}/attempt', [ActivityController::class, 'storeAttempt'])->name('activity.attempt');
+    Route::post('/activity/{activity}/complete', [ActivityController::class, 'complete'])->name('activity.complete');
 });
 
 require __DIR__.'/auth.php';
