@@ -1,6 +1,22 @@
-import { Head, router } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 
-export default function AdventureMap() {
+interface Subject {
+    id: number;
+    name: string;
+    icon: string | null;
+    color: string | null;
+}
+
+interface Props {
+    student: {
+        name: string;
+        xpTotal: number;
+        level: number;
+    };
+    subjects: Subject[];
+}
+
+export default function AdventureMap({ student, subjects }: Props) {
     const handleLogout = () => {
         router.post(route('student.logout'));
     };
@@ -16,8 +32,10 @@ export default function AdventureMap() {
                         🤠
                     </div>
                     <div>
-                        <h2 className="text-xl font-bold">¡Bienvenido, Explorador!</h2>
-                        <p className="text-xs text-slate-400">Nivel 1 · 0 XP</p>
+                        <h2 className="text-xl font-bold">¡Bienvenido, {student.name}!</h2>
+                        <p className="text-xs text-slate-400">
+                            Nivel {student.level} · {student.xpTotal} XP
+                        </p>
                     </div>
                 </div>
 
@@ -33,31 +51,27 @@ export default function AdventureMap() {
             <main className="max-w-5xl mx-auto">
                 <h1 className="text-3xl font-bold text-center mb-8">Elige tu Asignatura</h1>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="bg-[#16213e] p-6 rounded-3xl border-2 border-[#3B82F6] hover:scale-105 transition-all cursor-pointer">
-                        <div className="text-4xl mb-2">🔢</div>
-                        <h3 className="text-2xl font-bold text-[#3B82F6]">Matemáticas</h3>
-                        <p className="text-slate-400 text-sm mt-1">Mundo de los Números y Operaciones</p>
+                {subjects.length === 0 ? (
+                    <p className="text-center text-slate-400">
+                        Todavía no hay asignaturas con contenido. ¡Vuelve pronto!
+                    </p>
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {subjects.map((subject) => (
+                            <Link
+                                key={subject.id}
+                                href={route('student.topics', subject.id)}
+                                className="block bg-[#16213e] p-6 rounded-3xl border-2 hover:scale-105 transition-all cursor-pointer"
+                                style={{ borderColor: subject.color ?? '#3B82F6' }}
+                            >
+                                <div className="text-4xl mb-2">{subject.icon ?? '📘'}</div>
+                                <h3 className="text-2xl font-bold" style={{ color: subject.color ?? '#3B82F6' }}>
+                                    {subject.name}
+                                </h3>
+                            </Link>
+                        ))}
                     </div>
-
-                    <div className="bg-[#16213e] p-6 rounded-3xl border-2 border-[#EF4444] hover:scale-105 transition-all cursor-pointer">
-                        <div className="text-4xl mb-2">📚</div>
-                        <h3 className="text-2xl font-bold text-[#EF4444]">Lengua</h3>
-                        <p className="text-slate-400 text-sm mt-1">Mundo de las Palabras y Cuentos</p>
-                    </div>
-
-                    <div className="bg-[#16213e] p-6 rounded-3xl border-2 border-[#10B981] hover:scale-105 transition-all cursor-pointer">
-                        <div className="text-4xl mb-2">🇬🇧</div>
-                        <h3 className="text-2xl font-bold text-[#10B981]">Inglés</h3>
-                        <p className="text-slate-400 text-sm mt-1">Mundo de los Idiomas</p>
-                    </div>
-
-                    <div className="bg-[#16213e] p-6 rounded-3xl border-2 border-[#F59E0B] hover:scale-105 transition-all cursor-pointer">
-                        <div className="text-4xl mb-2">🌍</div>
-                        <h3 className="text-2xl font-bold text-[#F59E0B]">Conocimiento del Medio</h3>
-                        <p className="text-slate-400 text-sm mt-1">El Cuerpo Humano y la Naturaleza</p>
-                    </div>
-                </div>
+                )}
             </main>
         </div>
     );

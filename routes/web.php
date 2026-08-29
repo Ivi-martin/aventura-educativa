@@ -7,14 +7,11 @@ use Inertia\Inertia;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\Auth\StudentAuthController;
 use App\Http\Controllers\Student\ActivityController;
+use App\Http\Controllers\Student\MapController;
+use App\Http\Controllers\Student\TopicController;
 
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
+    return Inertia::render('Welcome');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -35,9 +32,8 @@ Route::post('/student/logout', [StudentAuthController::class, 'logout'])->name('
 
 // Rutas protegidas del juego
 Route::middleware([\App\Http\Middleware\EnsureStudentIsAuthenticated::class])->prefix('student')->name('student.')->group(function () {
-    Route::get('/adventure', function () {
-        return Inertia::render('Student/AdventureMap');
-    })->name('adventure');
+    Route::get('/adventure', [MapController::class, 'index'])->name('adventure');
+    Route::get('/subject/{subject}', [TopicController::class, 'index'])->name('topics');
 
     Route::get('/activity/{activity}', [ActivityController::class, 'show'])->name('activity.show');
     Route::post('/activity/{activity}/attempt', [ActivityController::class, 'storeAttempt'])->name('activity.attempt');
